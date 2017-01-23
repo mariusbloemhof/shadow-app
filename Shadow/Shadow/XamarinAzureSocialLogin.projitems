@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f8e690b8-269f-4e37-baaf-51ea591397b5</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Shadow</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ErrorEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)RouteSMS.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ShadowService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BaseContentPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContactsSignupView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIConst.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIHelper.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewLog.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WelcomePage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MainPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SignupPageWizard.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceSignupView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)LocationView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UserDetailView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FaqView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ImageButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ExtendedEntry.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ExtendedLabel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\AutoCompleteView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\PlacesAutoComplete.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\ExtendedViewCell.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContactPickerPage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Account.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Audit.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\Contact.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\LoginRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\RegistrationRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\RegistrationResponse.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\ResetRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\SocialLoginRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Model\UserContacts.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ContactsView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceView.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Controls\CustomDatePicker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\INativeFunctions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BLEDevice.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DeviceAction.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Controls\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
+  </ItemGroup>
+</Project>

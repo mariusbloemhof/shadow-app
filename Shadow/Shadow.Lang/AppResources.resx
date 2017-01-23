@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<resheader name="resmimetype">
+		<value>text/microsoft-resx</value>
+	</resheader>
+	<resheader name="version">
+		<value>2.0</value>
+	</resheader>
+	<resheader name="reader">
+		<value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<resheader name="writer">
+		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+	</resheader>
+	<data name="ErrorTitle" xml:space="preserve">
+	    <value>Error</value>
+	</data>
+	<data name="ErrorSavingPaired" xml:space="preserve">
+	    <value>Unable to save paired devices.</value>
+	</data>
+	<data name="lblAuthenticating" xml:space="preserve">
+	    <value>Authenticating...</value>
+	</data>
+	<data name="lblValidating" xml:space="preserve">
+	    <value>Validating...</value>
+	</data>
+	<data name="lblRegistering" xml:space="preserve">
+	    <value>Registering...</value>
+	</data>
+	<data name="lblGettingLocation" xml:space="preserve">
+	    <value>Getting Location...</value>
+	</data>
+	<data name="lblLookingUpAddress" xml:space="preserve">
+	    <value>Looking up Address...</value>
+	</data>
+	<data name="DefaultMessage1" xml:space="preserve">
+	    <value>Please help!!</value>
+	</data>
+	<data name="DefaultMessage2" xml:space="preserve">
+	    <value>Call 10111</value>
+	</data>
+	<data name="BtnOK" xml:space="preserve">
+	    <value>OK</value>
+	</data>
+	<data name="BtnScan" xml:space="preserve">
+	    <value>Scan for devices</value>
+	</data>
+	<data name="BtnPair" xml:space="preserve">
+	    <value>Pair</value>
+	</data>
+	<data name="BtnUnpair" xml:space="preserve">
+	    <value>Unpair</value>
+	</data>
+	<data name="lblWelcome_Tagline" xml:space="preserve">
+	    <value>Your personalised security companion</value>
+	</data>
+	<data name="lblWelcome_TCAgree" xml:space="preserve">
+	    <value>By tapping Create Account, I agree to the Terms and Conditions of Service and Privacy Policy.</value>
+	</data>
+	<data name="btnWelcome_CreateAccount" xml:space="preserve">
+	    <value>Create Account</value>
+	</data>
+	<data name="lblWelcome_SignIn" xml:space="preserve">
+	    <value>Or, sign in.</value>
+	</data>
+	<data name="lblWelcome_NoShadowDevice" xml:space="preserve">
+	    <value>No SHADOW device?</value>
+	</data>
+	<data name="lblWelcome_BuyNow" xml:space="preserve">
+	    <value>Buy now</value>
+	</data>
+	<data name="phWelcome_EnterEmailAddress" xml:space="preserve">
+	    <value>Enter email address here</value>
+	</data>
+	<data name="phWelcome_CreatePassword" xml:space="preserve">
+	    <value>Create a password here</value>
+	</data>
+	<data name="lblContactsPage_Contacts" xml:space="preserve">
+	    <value>Sign up / Add Emergency Contacts</value>
+	</data>
+	<data name="lblContactsPage_AddContacts" xml:space="preserve">
+	    <value>Add the contacts you want to notify in case of an emergency</value>
+	</data>
+	<data name="btnContactsPage_Finish" xml:space="preserve">
+	    <value>Finish</value>
+	</data>
+	<data name="lblContactsPage_EmergencyContacts" xml:space="preserve">
+	    <value>Emergency Contacts</value>
+	</data>
+	<data name="lblContactsPage_AddContact" xml:space="preserve">
+	    <value>Add Contact</value>
+	</data>
+	<data name="lblEmergencyMessage_Title" xml:space="preserve">
+	    <value>Sign up/Emergency Message</value>
+	</data>
+	<data name="lblEmergency_ChooseMessage" xml:space="preserve">
+	    <value>Choose to use the default Emergency message or set up your own message here. Your location will automatically be included in the message.</value>
+	</data>
+	<data name="btnEmergencyMessage_Continue" xml:space="preserve">
+	    <value>Continue</value>
+	</data>
+	<data name="btnEmergencyMessage_Back" xml:space="preserve">
+	    <value>Back</value>
+	</data>
+	<data name="lblEmergency_MessageTitle" xml:space="preserve">
+	    <value>Emergency Message</value>
+	</data>
+	<data name="btnEmergency_Preview" xml:space="preserve">
+	    <value>PREVIEW</value>
+	</data>
+	<data name="btnEmergency_Default" xml:space="preserve">
+	    <value>GO BACK TO DEFAULT</value>
+	</data>
+	<data name="lblSignupLocation_Title" xml:space="preserve">
+	    <value>Sign up/Primary Location</value>
+	</data>
+	<data name="lblSignupDevicePage_DeviceList" xml:space="preserve">
+	    <value>Shadow Device List</value>
+	</data>
+	<data name="lblSignupDevicePage_btnScan" xml:space="preserve">
+	    <value>Scan for Shadow Device</value>
+	</data>
+	<data name="lblMain_AppTitle" xml:space="preserve">
+	    <value>S H A D O W</value>
+	</data>
+
+
+</root>
