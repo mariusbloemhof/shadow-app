@@ -59,11 +59,13 @@ namespace Shadow
 
         public async void bleStateChanged(object sender, BluetoothStateChangedArgs e)
         {
-            if (e.NewState == BluetoothState.On)
+            //Bluetooth was switched on
+            if ((e.NewState == BluetoothState.On) && (e.OldState == BluetoothState.Off))
             {
                 await _bleAdapter.StartScanningForDevicesAsync();
             }
-            if (e.NewState == BluetoothState.Off)
+            //Bluetooth was switched off
+            if ((e.NewState == BluetoothState.Off) && (e.OldState == BluetoothState.On))
             {
                 service = null;
                 characteristic = null;
@@ -186,8 +188,11 @@ namespace Shadow
                             return false;
                         });
                     }
+                    var batterylevel = BatteryLevel(device);
+                    batterylevel.RunSynchronously();
+                    int level = batterylevel.Result;
 
-					if (Shadow.Data.Runtime.MainDisplayInstance != null)
+                    if (Shadow.Data.Runtime.MainDisplayInstance != null)
 					{
 						if(Shadow.Data.Runtime.MainDisplayInstance.Title == "MainPage")
 							((MainPage)Shadow.Data.Runtime.MainDisplayInstance).UpdatedConnectedDevicesLabel();
@@ -274,13 +279,13 @@ namespace Shadow
             }
 		}
 
-        public async Task<int> BatteryLevel(ShadowDevice shadow)
+        public async Task<int> BatteryLevel(IDevice device)
         {
-            int batteryLevel = -1;
-            if ((shadow != null) && (shadow.Device != null) && (shadow.Device.State != Plugin.BLE.Abstractions.DeviceState.Disconnected))
+            var batteryLevel = -1;
+            if ((device != null) && (device.State != Plugin.BLE.Abstractions.DeviceState.Disconnected))
             {
                 ////Device battery service
-                var batteryService = await shadow.Device.GetServiceAsync(Guid.Parse("0000180f-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
+                var batteryService = await device.GetServiceAsync(Guid.Parse("0000180f-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
                 ////Device battery characteristic
                 var battery = await batteryService.GetCharacteristicAsync(Guid.Parse("00002a19-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
                 var bytes = await battery.ReadAsync().ConfigureAwait(false);
