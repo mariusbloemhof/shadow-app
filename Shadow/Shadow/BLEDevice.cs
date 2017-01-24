@@ -36,7 +36,9 @@ namespace Shadow
             _bleAdapter.DeviceConnectionLost += bleConnectionLost;
             _bleAdapter.ScanTimeoutElapsed += bleScanTimeout;
             _bleAdapter.DeviceConnected += bleDeviceConnected;
-            
+            _bluetooth.StateChanged += bleStateChanged;
+
+
             if (Shadow.IO.LocalStorage.FileExists("root", Shadow.Data.Const.LASTPAIREDDEVICE).Result)
 			{
 				Shadow.Logger.LogDebug("AppDelegate", "FinishedLaunching 3", "");
@@ -55,14 +57,37 @@ namespace Shadow
             }
 		}
 
-		public void StartScanning()
+        public async void bleStateChanged(object sender, BluetoothStateChangedArgs e)
+        {
+            if (e.NewState == BluetoothState.On)
+            {
+                await _bleAdapter.StartScanningForDevicesAsync();
+            }
+            if (e.NewState == BluetoothState.Off)
+            {
+                service = null;
+                characteristic = null;
+
+                if (Shadow.Data.Runtime.MainDisplayInstance != null)
+                {
+                    ((MainPage)Shadow.Data.Runtime.MainDisplayInstance).UpdatedConnectedDevicesLabel();
+                }
+
+                if (_bleAdapter.IsScanning)
+                    await _bleAdapter.StopScanningForDevicesAsync();
+                _bleAdapter.ScanTimeout = 15000;
+                await _bleAdapter.StartScanningForDevicesAsync();
+            }
+        }
+
+        public async void StartScanning()
 		{
-			_bleAdapter.StartScanningForDevicesAsync();
+			await _bleAdapter.StartScanningForDevicesAsync();
 		}
 
-		public void StopScanning()
+		public async void StopScanning()
 		{
-			_bleAdapter.StopScanningForDevicesAsync();
+			await _bleAdapter.StopScanningForDevicesAsync();
 		}
 
         public void RemoveConnectedDevice()
@@ -76,9 +101,9 @@ namespace Shadow
             }
         }
 
-        private void RemoveConnectedDevice(IDevice device)
+        private async void RemoveConnectedDevice(IDevice device)
 		{
-            _bleAdapter.DisconnectDeviceAsync(device);
+            await _bleAdapter.DisconnectDeviceAsync(device);
             Shadow.Data.ShadowDevice deviceToRemove = null;
 			foreach (Shadow.Data.ShadowDevice connecteddevice in Shadow.Data.Runtime.ConnectedDevices)
 			{
@@ -100,7 +125,6 @@ namespace Shadow
 
 		public async void bleConnectionLost(object sender, DeviceErrorEventArgs e)
 		{
-            RemoveConnectedDevice(e.Device);
             service = null;
             characteristic = null;
 
@@ -185,6 +209,14 @@ namespace Shadow
 				{
 					Shadow.Data.Runtime.DevicesFound.Add(new ShadowDevice(e.Device));
 				}
+                if (e.Device.Id.ToString() == Runtime.LastPairedDeviceID)
+                {
+                    if (_bleAdapter.IsScanning)
+                    {
+                        await _bleAdapter.StopScanningForDevicesAsync().ConfigureAwait(false);
+                    }
+                    await _bleAdapter.ConnectToKnownDeviceAsync(new Guid(Runtime.LastPairedDeviceID)).ConfigureAwait(false);
+                }
 			}
 		}
 
@@ -192,9 +224,9 @@ namespace Shadow
         {
             if (characteristic != null)
             {
-                await characteristic.WriteAsync(new byte[] { 0x21 });
+                await characteristic.WriteAsync(new byte[] { 0x21 }).ConfigureAwait(false);
                 await Task.Delay(DurationInMilSec);
-                await characteristic.WriteAsync(new byte[] { 0x13 });
+                await characteristic.WriteAsync(new byte[] { 0x13 }).ConfigureAwait(false);
                 if (DelayAfterMilSec != 0)
                 {
                     await Task.Delay(DelayAfterMilSec);
@@ -204,9 +236,9 @@ namespace Shadow
 
         public async Task Vibrate(int DurationInMilSec, ICharacteristic c, int DelayAfterMilSec = 0)
         {
-            await c.WriteAsync(new byte[] { 0x21 });
+            await c.WriteAsync(new byte[] { 0x21 }).ConfigureAwait(false);
             await Task.Delay(DurationInMilSec);
-            await c.WriteAsync(new byte[] { 0x13 });
+            await c.WriteAsync(new byte[] { 0x13 }).ConfigureAwait(false);
             if (DelayAfterMilSec != 0)
             {
                 await Task.Delay(DelayAfterMilSec);
@@ -245,13 +277,13 @@ namespace Shadow
         public async Task<int> BatteryLevel(ShadowDevice shadow)
         {
             int batteryLevel = -1;
-            if ((shadow.Device != null) && (shadow.Device.State != Plugin.BLE.Abstractions.DeviceState.Disconnected))
+            if ((shadow != null) && (shadow.Device != null) && (shadow.Device.State != Plugin.BLE.Abstractions.DeviceState.Disconnected))
             {
                 ////Device battery service
-                var batteryService = await shadow.Device.GetServiceAsync(Guid.Parse("0000180f-0000-1000-8000-00805f9b34fb"));
+                var batteryService = await shadow.Device.GetServiceAsync(Guid.Parse("0000180f-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
                 ////Device battery characteristic
-                var battery = await batteryService.GetCharacteristicAsync(Guid.Parse("00002a19-0000-1000-8000-00805f9b34fb"));
-                var bytes = battery.ReadAsync();
+                var battery = await batteryService.GetCharacteristicAsync(Guid.Parse("00002a19-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
+                var bytes = await battery.ReadAsync().ConfigureAwait(false);
                 Int32.TryParse(bytes.ToString(), out batteryLevel);
             }
             return batteryLevel;
