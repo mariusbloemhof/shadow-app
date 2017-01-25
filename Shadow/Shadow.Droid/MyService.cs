@@ -37,6 +37,22 @@ namespace Shadow
 			}
 		}
 
+        private void StartBLE()
+        {
+            Shadow.Data.Runtime.Contacts = new ObservableCollection<Shadow.Data.Contact>();
+            if (Shadow.IO.LocalStorage.FileExists("root", Shadow.Data.Const.CONTACTS).Result)
+            {
+                Shadow.Logger.LogDebug("AppDelegate", "FinishedLaunching 3", "");
+                string json = Shadow.IO.LocalStorage.ReadTextFile("root", Shadow.Data.Const.CONTACTS).Result;
+                Shadow.Data.Runtime.Contacts = JsonConvert.DeserializeObject<ObservableCollection<Shadow.Data.Contact>>(json);
+            }
+
+            Shadow.Data.Runtime.MessageLine1 = Shadow.Lang.AppResources.DefaultMessage1;
+            Shadow.Data.Runtime.MessageLine2 = Shadow.Lang.AppResources.DefaultMessage2;
+
+            Shadow.Data.Runtime.BLEDevice = new BLEDevice();
+        }
+
 		public void DoStuff ()  
 		{
 
