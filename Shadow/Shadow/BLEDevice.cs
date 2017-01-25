@@ -13,6 +13,7 @@ using Newtonsoft.Json;
 using Shadow.Data;
 using Shadow.IO;
 using System.Runtime.InteropServices;
+using Plugin.BLE.Abstractions.Extensions;
 
 namespace Shadow
 {
@@ -23,6 +24,8 @@ namespace Shadow
 		private IBluetoothLE _bluetooth;
         private IService service;
         private ICharacteristic characteristic;
+
+        public event BatteryEventHandler onBatteryLevelRead;
 
         public BLEDevice()
 		{
@@ -101,6 +104,8 @@ namespace Shadow
                     RemoveConnectedDevice(device);
                 }
             }
+            Runtime.LastPairedDeviceID = String.Empty;
+            
         }
 
         private async void RemoveConnectedDevice(IDevice device)
@@ -188,15 +193,7 @@ namespace Shadow
                             return false;
                         });
                     }
-                    var batterylevel = BatteryLevel(device);
-                    batterylevel.RunSynchronously();
-                    int level = batterylevel.Result;
-
-                    if (Shadow.Data.Runtime.MainDisplayInstance != null)
-					{
-						if(Shadow.Data.Runtime.MainDisplayInstance.Title == "MainPage")
-							((MainPage)Shadow.Data.Runtime.MainDisplayInstance).UpdatedConnectedDevicesLabel();
-					}
+                    await BatteryLevel(device);
                 }
             }
             catch (DeviceConnectionException ex)
@@ -288,10 +285,22 @@ namespace Shadow
                 var batteryService = await device.GetServiceAsync(Guid.Parse("0000180f-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
                 ////Device battery characteristic
                 var battery = await batteryService.GetCharacteristicAsync(Guid.Parse("00002a19-0000-1000-8000-00805f9b34fb")).ConfigureAwait(false);
-                var bytes = await battery.ReadAsync().ConfigureAwait(false);
-                Int32.TryParse(bytes.ToString(), out batteryLevel);
+                await battery.ReadAsync().ConfigureAwait(false);
+                string hexValue = battery.Value.ToHexString();
+                batteryLevel = int.Parse(hexValue, System.Globalization.NumberStyles.HexNumber);
+                RaiseonBatteryLevelRead(batteryLevel);
             }
             return batteryLevel;
+        }
+
+        private void RaiseonBatteryLevelRead(int batterylevel)
+        {
+            var handler = onBatteryLevelRead;
+            if (handler != null)
+            {
+                handler(typeof(BLEDevice), batterylevel);
+            }
+                
         }
     }
 }

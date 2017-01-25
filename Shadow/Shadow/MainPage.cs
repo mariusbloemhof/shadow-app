@@ -34,7 +34,8 @@ namespace Shadow
 
 		public MainPage()
 		{
-			BatteryLabel = new Label
+            Shadow.Data.Runtime.BLEDevice.onBatteryLevelRead += batteryLevelRead;
+            BatteryLabel = new Label
 			{
 				HorizontalOptions = LayoutOptions.End,
 				TextColor = Xamarin.Forms.Color.White,
@@ -169,76 +170,76 @@ namespace Shadow
 				BackgroundColor = UIConst.BgColor,
 			};
 
-			Content = new StackLayout
-			{
-				Padding = 0,
-				Spacing = 0,
-				Orientation = StackOrientation.Vertical,
-				VerticalOptions = LayoutOptions.FillAndExpand,
-				Children = {
-					new StackLayout {
-						Padding = 0,
-						Spacing = 0,
-						VerticalOptions = LayoutOptions.Start,
-						Children = {
-							UIHelper.TitleSpacer(),
-							        _titleBar,
-						}
-					},
-					new StackLayout {
-						Orientation = StackOrientation.Horizontal,
-						BackgroundColor = UIConst.LightGrey,
-						HorizontalOptions = LayoutOptions.FillAndExpand,
-						Padding = 10,
-						Children = {
-							new Image {
-								Source = "devicephoto.png",
-								HeightRequest = 45,
-								HorizontalOptions = LayoutOptions.Start
-							},
-							new StackLayout {
-								HorizontalOptions = LayoutOptions.FillAndExpand,
-								Orientation = StackOrientation.Vertical,
-								Children = {
-									new Label {
-										FontSize = 15,
-										FontAttributes = FontAttributes.Bold,
-										Text = "Shadow Device",
-										TextColor = UIConst.OrangeColor,
-									},
-									_connectedDevices,
-								}
-							},
-							BatteryLabel
-						}
-					},
-					new StackLayout {
-						BackgroundColor = Xamarin.Forms.Color.White,
-						HeightRequest = 0.5
-					},
-					_container
-					,
-					new StackLayout {
-						BackgroundColor = Xamarin.Forms.Color.White,
-						HeightRequest = 0.5
-					},
-					new StackLayout {
-						Padding = 10,
-						Spacing = 0,
-						BackgroundColor = UIConst.ToolbarBgColor,
-						HeightRequest = toolbarSize,
-						Orientation = StackOrientation.Horizontal,
-						VerticalOptions = LayoutOptions.End,
-						HorizontalOptions = LayoutOptions.FillAndExpand,
-						Children = {
-							_btnContacts,
-							_btnMessage,
-							_btnDevice,
-							_btnFAQ
-						}
-					}
-				}
-			};
+            Content = new StackLayout
+            {
+                Padding = 0,
+                Spacing = 0,
+                Orientation = StackOrientation.Vertical,
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                Children = {
+                    new StackLayout {
+                        Padding = 0,
+                        Spacing = 0,
+                        VerticalOptions = LayoutOptions.Start,
+                        Children = {
+                            UIHelper.TitleSpacer(),
+                                    _titleBar,
+                        }
+                    },
+                    new StackLayout {
+                        Orientation = StackOrientation.Horizontal,
+                        BackgroundColor = UIConst.LightGrey,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Padding = 10,
+                        Children = {
+                            new Image {
+                                Source = "devicephoto.png",
+                                HeightRequest = 45,
+                                HorizontalOptions = LayoutOptions.Start
+                            },
+                            new StackLayout {
+                                HorizontalOptions = LayoutOptions.FillAndExpand,
+                                Orientation = StackOrientation.Vertical,
+                                Children = {
+                                    new Label {
+                                        FontSize = 15,
+                                        FontAttributes = FontAttributes.Bold,
+                                        Text = "Shadow Device",
+                                        TextColor = UIConst.OrangeColor,
+                                    },
+                                    _connectedDevices,
+                                }
+                            },
+                            BatteryLabel
+                        }
+                    },
+                    new StackLayout {
+                        BackgroundColor = Xamarin.Forms.Color.White,
+                        HeightRequest = 0.5
+                    },
+                    _container
+                    ,
+                    new StackLayout {
+                        BackgroundColor = Xamarin.Forms.Color.White,
+                        HeightRequest = 0.5
+                    },
+                    new StackLayout {
+                        Padding = 10,
+                        Spacing = 0,
+                        BackgroundColor = UIConst.ToolbarBgColor,
+                        HeightRequest = toolbarSize,
+                        Orientation = StackOrientation.Horizontal,
+                        VerticalOptions = LayoutOptions.End,
+                        HorizontalOptions = LayoutOptions.FillAndExpand,
+                        Children = {
+                            _btnContacts,
+                            _btnMessage,
+                            _btnDevice,
+                            _btnFAQ
+                        }
+                    }
+                }
+            };
 
 			UIHelper.SetHomeTitle(_titleBar, "Contacts");
 
@@ -248,7 +249,7 @@ namespace Shadow
 			_faqView = new FaqView();
 
 			_container.Children.Add(_contactsView);
-		}
+        }
 
 		private void SelectView(int view)
 		{
@@ -294,17 +295,30 @@ namespace Shadow
 		public void UpdatedConnectedDevicesLabel()
 		{
 			if (Shadow.Data.Runtime.ConnectedDevices.Count > 0)
-				_connectedDevices.Text = "Connected";
+            {
+                _connectedDevices.Text = "Connected";
+                Device.BeginInvokeOnMainThread(() => { UpdateBatteryLevel(); });
+            }
+				
 			else
 				_connectedDevices.Text = "No Device Connected";
 		}
 
-		public async void UpdateBatteryLevel()
+		public void UpdateBatteryLevel()
 		{
-			BatteryLabel.Text = Shadow.Data.Runtime.BLEDevice.BatteryLevel(Shadow.Data.Runtime.ConnectedDevices[0]).Result.ToString();
-		}
+            //read battery. Result will return in event for onBatteryLevelRead
+            Shadow.Data.Runtime.BLEDevice.BatteryLevel(Shadow.Data.Runtime.ConnectedDevices[0].Device).ConfigureAwait(false);
+        }
 
-	}
+        public void batteryLevelRead(object sender, int level)
+        {
+            Device.BeginInvokeOnMainThread(() => 
+            {
+                BatteryLabel.Text = level.ToString() + "%";
+            });
+        }
+
+    }
 }
 
 
