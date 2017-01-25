@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Shadow
 {
@@ -24,5 +25,8 @@ namespace Shadow
         public static string LoginURL = @"https://localhost:44306/Account/ExternalLogin";
         //public static string LoginURL = @"https://test-shadow-mobapp.azurewebsites.net/api/login";
     }
+
+    [ComVisible(true)]
+    public delegate void BatteryEventHandler(object sender, int level);
 }
 
