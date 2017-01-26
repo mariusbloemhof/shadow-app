@@ -191,6 +191,20 @@ namespace Shadow
             return null;
         }
 
+        public static string GetToken()
+        {
+            try
+            {
+                if (Client.CurrentUser != null) 
+                return Client.CurrentUser.MobileServiceAuthenticationToken;
+            }
+            catch (MobileServiceInvalidOperationException ex)
+            {
+                throw ex;
+            }
+            return null;
+        }
+
         public static async Task<Account> GetLoggedinUser()
         {
             try
@@ -317,15 +331,18 @@ namespace Shadow
 
         public static async Task Addlog(int eventstatus, string eventdescription, string eventtype)
         {
-            Audit logentry = new Audit();
+            if (isAuthenticated)
+            {
+                Audit logentry = new Audit();
 
-            logentry.eventStatus = eventstatus;
-            logentry.eventDescription = eventdescription;
-            logentry.eventType = eventtype;
-            logentry.timeStamp = DateTime.Now.ToUniversalTime();
-            logentry.UserId = account.Id;
+                logentry.eventStatus = eventstatus;
+                logentry.eventDescription = eventdescription;
+                logentry.eventType = eventtype;
+                logentry.timeStamp = DateTime.Now.ToUniversalTime();
+                logentry.UserId = account.Id;
 
-            await AuditTable.InsertAsync(logentry);
+                await AuditTable.InsertAsync(logentry);
+            }
         }
 
 #if OFFLINE_SYNC_ENABLED
@@ -417,7 +434,6 @@ namespace Shadow
                     email = username,
                     password = password
                 });
-
             return user;
         }
 

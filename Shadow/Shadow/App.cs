@@ -14,8 +14,7 @@ namespace Shadow
 {
 	public class App : Application
 	{
-		/*private static readonly IAdapter _bluetoothAdapter;
-		public static IAdapter BluetoothAdapter { get { return _bluetoothAdapter; } }*/
+        private bool isLoggingIn = false;
 
 		static App()
 		{
@@ -36,40 +35,51 @@ namespace Shadow
 
 		public App()
 		{
-			//MainPage = new ScanDevicesPage ();
-			//MainPage = new MainPage();
-			//MainPage = new WelcomePage();
-			//MainPage = new EmergencyMessagePage();
-			//MainPage = new SignupDevice();
-			//MainPage = new MainPage();
-			//MainPage = new SignupPageWizard();
-			//MainPage = new ContactPickerPage();
 		}
 
 		protected async override void OnStart()
 		{
             //ShadowServiceHandle when your app starts
-			MainPage = new WelcomePage();
-            return;
+            //MainPage = new WelcomePage();
+            //         return;
 
-            Account account = await ShadowService.GetLoggedinUser();
-			if((account == null) || (string.IsNullOrEmpty(account.firstName)))
-				MainPage = new WelcomePage();
-			else
-				MainPage = new MainPage();
+            try
+            {
+                isLoggingIn = true;
+                Account account = await ShadowService.GetLoggedinUser();
+                if ((account == null) || (string.IsNullOrEmpty(account.firstName)))
+                    MainPage = new WelcomePage();
+                else
+                    MainPage = new MainPage();
+            }
+            finally
+            {
+                isLoggingIn = false;
+            }
+
 		}
 
 		protected async override void OnResume()
 		{
             // Handle when your app resumes
-           /* MainPage = new MainPage();
-            return;*/
-            Account account = await ShadowService.GetLoggedinUser();
-			if ((account == null) || (string.IsNullOrEmpty(account.firstName)))
-				MainPage = new WelcomePage();
-			else
-				MainPage = new MainPage();
-		}
+            if (isLoggingIn)
+            {
+                return;
+            }
+            try
+            {
+                isLoggingIn = true;
+                Account account = await ShadowService.GetLoggedinUser();
+			    if ((account == null) || (string.IsNullOrEmpty(account.firstName)))
+				    MainPage = new WelcomePage();
+			    else
+				    MainPage = new MainPage();
+            }
+            finally
+            {
+                isLoggingIn = false;
+            }
+        }
 
 		public static async void SendAlert()
 		{
@@ -107,16 +117,17 @@ namespace Shadow
 								//string res = http.GetRequest("http://bulksms.2way.co.za/eapi/submission/send_sms/2/2.0?username=erhard&password=verbatim1&message=" + System.Web.HttpUtility.UrlEncode(msg) + "&msisdn=" + mobile);
 								bool result = await ShadowService.sendSMS(mobile, msg);
 								Shadow.Logger.LogDebug("AppDelegate", "Trigger SMS Result", result.ToString());
+                                ShadowService.Addlog(0, mobile, "Send SMS");
 							}
 							else
 							{
-								var smsMessenger = MessagingPlugin.SmsMessenger;
-								if (smsMessenger.CanSendSms)
-								{
-									smsMessenger.SendSms(mobile, msg);
-								}
-								//DependencyService.Get<INativeFunctions>().SendSMS(mobile, msg);
-							}
+                                var smsMessenger = MessagingPlugin.SmsMessenger;
+                                if (smsMessenger.CanSendSms)
+                                {
+                                    smsMessenger.SendSms(mobile, msg);
+                                }
+                                //DependencyService.Get<INativeFunctions>().SendSMS(mobile, msg);
+                            }
 						}
 					}
 

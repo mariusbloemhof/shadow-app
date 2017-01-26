@@ -50,7 +50,7 @@ namespace Shadow
 				}
 			}
 
-			_btnLogin = new Button
+            _btnLogin = new Button
 			{
 				BackgroundColor = UIConst.OrangeColor,
 				TextColor = Xamarin.Forms.Color.White,
@@ -203,13 +203,16 @@ namespace Shadow
 					using (var dlg = UserDialogs.Instance.Loading(Shadow.Lang.AppResources.lblAuthenticating, null, "", true))
 					{
 						shadowUser = await ShadowService.AuthenticateUser(_txtEmail.Text, _txtPassword.Text);
+                        
 					};
 
 					if (shadowUser == null)
 						await DisplayAlert("Login Error", "Invalid email address or password.", "OK");
 					else
 					{
-						if (string.IsNullOrEmpty(shadowUser.firstName))
+                        var token = ShadowService.GetToken();
+
+                        if (string.IsNullOrEmpty(shadowUser.firstName))
 						{
 							await Navigation.PushModalAsync(new SignupPageWizard());
 

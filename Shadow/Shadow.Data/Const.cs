@@ -9,7 +9,8 @@ namespace Shadow.Data
         public static string LASTPAIREDDEVICE = "lastpaireddevice.json";
         public static string CONTACTS = "contacts.json";
 		public static string ACCOUNT = "account.json";
+        public static string TOKEN = "token.json";
 
-	}
+    }
 }
 
