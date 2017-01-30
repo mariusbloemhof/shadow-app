@@ -24,6 +24,7 @@ namespace Shadow
 		private IBluetoothLE _bluetooth;
         private IService service;
         private ICharacteristic characteristic;
+        private bool IsPanicing = false;
 
         public event BatteryEventHandler onBatteryLevelRead;
 
@@ -70,6 +71,7 @@ namespace Shadow
             //Bluetooth was switched off
             if ((e.NewState == BluetoothState.Off) && (e.OldState == BluetoothState.On))
             {
+                characteristic.ValueUpdated -= OnPanicPressed;
                 service = null;
                 characteristic = null;
 
@@ -132,6 +134,7 @@ namespace Shadow
 
 		public async void bleConnectionLost(object sender, DeviceErrorEventArgs e)
 		{
+            characteristic.ValueUpdated -= OnPanicPressed;
             service = null;
             characteristic = null;
 
@@ -217,7 +220,7 @@ namespace Shadow
                     {
                         await _bleAdapter.StopScanningForDevicesAsync().ConfigureAwait(false);
                     }
-                    await _bleAdapter.ConnectToKnownDeviceAsync(new Guid(Runtime.LastPairedDeviceID)).ConfigureAwait(false);
+                    await _bleAdapter.ConnectToKnownDeviceAsync(e.Device.Id).ConfigureAwait(false);
                 }
 			}
 		}
@@ -258,22 +261,40 @@ namespace Shadow
 
 		public async void OnPanicPressed(object sender, CharacteristicUpdatedEventArgs e)
 		{
-			if (DeviceAction.Pairing)
-			{
-                await Vibrate(500, e.Characteristic);
-                DeviceAction.PairDevice(e.Characteristic); // Vibrate only once paired
-			}
-			else
-			{
-                await Vibrate(100, e.Characteristic, 200);
-                await Vibrate(500, e.Characteristic, 200);
-                await Vibrate(100, e.Characteristic);
+            try
+            {
+                await characteristic.StopUpdatesAsync();
+                if (IsPanicing) return;
+                IsPanicing = true;
+                await e.Characteristic.ReadAsync().ConfigureAwait(false);
+                var cValue = e.Characteristic.Value.ToHexString();
+                bool buttonPress = (cValue == "11");
+                if (!buttonPress)
+                {
+                    return;
+                }
+                if (DeviceAction.Pairing)
+                {
+                    await Vibrate(500, e.Characteristic);
+                    DeviceAction.PairDevice(e.Characteristic); // Vibrate only once paired
+                }
+                else
+                {
+                    App.SendAlert();
+                    await Vibrate(100, e.Characteristic, 200);
+                    await Vibrate(500, e.Characteristic, 200);
+                    await Vibrate(100, e.Characteristic);
 
-				if (Shadow.Data.Runtime.TestMode)
-					Shadow.Data.Runtime.TestModeOk = true;
-				
-				App.SendAlert();
+                    if (Shadow.Data.Runtime.TestMode)
+                        Shadow.Data.Runtime.TestModeOk = true;
+                }
             }
+            finally
+            {
+                IsPanicing = false;
+                await characteristic.StartUpdatesAsync();
+            }
+
 		}
 
         public async Task<int> BatteryLevel(IDevice device)
